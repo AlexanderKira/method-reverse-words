@@ -1,25 +1,26 @@
 <?php
-
+//Обычно я не пишу комментарии в коде.
 function reverseWords($str): string
 {
-    //разбираем строку на слова и пробелы, помещаем в массив строк
+    //разбиваем строку по всем символам, которые не являются буквами, цифрами или одиночной кавычкой, помещаем в массив строк
     $words = preg_split("/([^\w'])/", $str, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
 
-    //создаем пустой массив для строк
+    //создаем пустой массив для будущих реверсивных строк
     $reversedWords = [];
 
+
     foreach ($words as $word) {
-        //поиск и замена
+        //поиск латинских букв и замена
         $reversedWord = preg_replace_callback("/[a-zA-Z]+/", function($match) {
-            //преобразуем строку в массив
+            //преобразуем строку в массив букв
             $chars = str_split($match[0]);
             //меняем порядок букв в реверсивном порядке и приводим в нижний регистр
             $reversedChars = array_map('strtolower', array_reverse($chars));
 
             foreach ($chars as $index => $char) {
-                //проверяем есть ли буквы в верхнем регистре
+                //обращаемся к оригинальной строке и проверяем есть ли буквы в верхнем регистре
                 if (ctype_upper($char)) {
-                    //то буква с таким же индексом в реверссивном массиве вернется в верхнем регистре
+                    //тогда буква с таким же индексом в реверссивном массиве вернется в верхнем регистре
                     $reversedChars[$index] = strtoupper($reversedChars[$index]);
                 }
             }
@@ -40,7 +41,8 @@ function testReverseWords(): void
     $tests = [
         ["Cat", "Tac"],
         ["houSe", "esuOh"],
-        ["elEpHant", "tnAhPele"],
+        ["third-part", "driht-trap"],
+        ["can`t", "nac`t"],
         ["cat,", "tac,"],
         ["is 'cold' now", "si 'dloc' won"]
     ];
@@ -52,7 +54,6 @@ function testReverseWords(): void
         $expected = $tests[$i][1];
         //выплняем реверс
         $output = reverseWords($input);
-
         //сравниваем значение после ревереса и предпологаемого ответа
         if ($output === $expected) {
             echo "Test " . ($i + 1) . " passed\n";
